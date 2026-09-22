@@ -1,0 +1,12 @@
+# a1-siku-core 配置模板 v1.0.0
+# 占位符 <...> 安装时由 install.py 填充；生产部署请按环境修改（配置保护：真实值不被升级覆盖）
+# 数据目录（= 安装目录）
+data_dir = <DATA_DIR>
+# 记忆库 DB 文件名（样例库；生产指向真实库文件）
+db_file = <MEMORY_DB_FILE>
+# 向量库目录（相对 data_dir）
+chroma_dir = <CHROMA_DIR>
+# 嵌入模型目录（生产指向真实模型路径；样例安装可保持占位符）
+model_dir = <MODEL_DIR>
+# 嵌入服务端口（自检 TCP 连接）
+embedding_port = <EMBEDDING_PORT>

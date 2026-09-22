@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "threshold": 0.9,
+  "min_len": 8,
+  "negation_guard": true,
+  "max_candidates": 500
+}

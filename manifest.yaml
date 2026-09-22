@@ -1,0 +1,36 @@
+agent: maintainers
+type: module-manifest
+schema_version: "1.0"
+updated: 2026-09-22
+# a1-siku-core 模块清单（manifest.yaml）
+# 合并自原 version 文件 + CHANGELOG.md（2026-08-16 结构重构）；版本号单源：install.py/update.py 均读本文件 version 字段
+module: a1-siku-core
+version: 1.2.0
+description: a1-siku-core · 知识库核心
+platform: macOS（本版本）；Windows 待适配
+license: AGPL-3.0-only (dual-licensed; commercial license available - see COMMERCIAL.md)
+changelog: |
+  # a1-siku-core CHANGELOG
+  
+  | 版本 | 日期 | 变更说明 | 作者 |
+  |:----:|:----:|:---------|:----:|
+  | 1.2.0 | 2026-09-22 | 四库 MCP 落地批次（E2-E6）合并升版：①样例库 schema 修正——安装生成 41 列同构库（3 索引 + FTS5 mem_fts + 3 同步触发器；旧版库仅告警并给补丁指引，不静默改库）②包残修复——README 资产清单 4 项「标注不封装」逐件处置（封装核验 / 明示后置接入项含步骤）+ 新增后置接入项 6 件清单 ③MCP 验证链——test_mcp.py（16 项检查·7 工具真实调用·端点守卫）×包根 MCP_CONFIG.md 三端接入模板（官方 Inspector 实测通过）④技能包随包——skills/（siku-query / siku-write / siku-ops + install_skills.py 安装器 + README 走通指引）⑤文档全文——INSTALL.md 按七节规范重写（环境要求 / 安装步骤 / 安装后验证 / 接入配置 / 注意事项 / 问题清单 FAQ / 卸载）+ README/manifest 同步（版本引用统一指向本文件 version 字段） | 执行者 |
+  | 1.1.0 | 2026-09-21 | E1 src 全量入包（P1 IN 50 件·09-21 版）：去个性化改造（环境变量覆盖口·零真实绝对路径）＋随件数据 shapes.yaml/distill_sim_dedup_config.json＋installer 映射补全（install.py/update.py sync 清单纳入 src/INSTALL.md/mcp_server.py/samples）＋grpo_full_pipeline.py 移出（P1 EXCL：非四库运行时功能）＋src 件全量逐件 sha256 登记 | 执行者 |
+  | 1.0.2 | 2026-08-23 | v2 更新（历史修复卡）：①四库核心当前版脚本入包——src/l3_retrieval.py（R1 拒答版：阈值 0.040 + SIKU_REFUSAL 开关）+ src/grpo_full_pipeline.py（GRPO 管道，10 样本冒烟实践）②README/INSTALL 补核心机制说明（R1 拒答 / GRPO / R12 备份轮转——保留 3 份 + db 归位，111G→51G 瘦身实践）③占位符化：包内零真实绝对路径（{{SIKU_ROOT}}/{{HERMES_HOME}}/{{GRPO_RUNS}}/{{BASE_MODEL}}/{{SIKU_SHADOW_LOG}}），附生产替换指引 ④manifest files 补 src/ | 执行者 |
+  | 1.0.0 | 2026-08-16 | 初始封装：README 四件套 + 引导安装（交互向导/自检 6 项/样例库 5 行模板）+ 升级件（check/apply/rollback/配置保护）+ config 模板（全占位符） | 维护者团队 |
+  
+  | 1.0.0 | 2026-08-16 | 维护方补充要求落地：①全文档 SOP frontmatter 四字段（agent: validator）+ 代码头作者/功能注释 ②MCP 接口（必交付）——mcp_server.py（stdio JSON-RPC 2.0，工具带输入输出 schema，与 CLI 共享核心逻辑），安装必注册（生成 mcp_server.py + MCP_CONFIG.md，含目标系统 MCP 配置文件位置指引），安装自检含 MCP 握手+工具调用 1 例 | 维护者团队 |
+# files = 发行内容清单（随包交付的顶层件/目录）；安装器实际镜像到安装目录的子集见 install.py sync_module_files（9 项：install.py/update.py/README.md/INSTALL.md/manifest.yaml/config.example/mcp_server.py/samples/src）
+files:
+  - INSTALL.md
+  - MCP_CONFIG.md
+  - README.md
+  - config.example
+  - install.py
+  - manifest.yaml
+  - mcp_server.py
+  - samples
+  - skills
+  - src
+  - test_mcp.py
+  - update.py

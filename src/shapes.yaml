@@ -1,0 +1,83 @@
+# shapes.yaml —— 四库 memory_store SHACL 自检约束（P2a②）
+# 0-token 校验器（shacl_validate.py）的约束定义文件——不装 pyshacl（第三方依赖零新增）。
+# 枚举类约束（type/conflict_type/relation_type）权威源 siku_types.py——本文件仅引用不复制
+# （R13.18 单一来源防漂移）；本文件只放非枚举硬约束（必填/长度/格式/范围）。
+# 违例只报告交人工裁决——校验器零写权限，绝不自动修。
+version: "1.0"
+title: "四库 memory_store 自检约束"
+created: "2026-08-28"
+target: "memory_store"
+mode: "0-token"
+shapes:
+  # ── error 级（硬约束——验收口径：error 违例必须为 0）──
+  - id: type_valid
+    severity: error
+    scope: all
+    validator: siku_types.validate_type
+    message: "type 不在合法枚举（25 种：13 内容+13 资产，rule 交集）"
+  - id: summary_required
+    severity: error
+    scope: all
+    rule: "summary 非空"
+    message: "summary 为空"
+  - id: source_agent_required
+    severity: error
+    scope: all
+    rule: "source_agent 非空"
+    message: "source_agent 为空"
+  - id: confidence_range
+    severity: error
+    scope: all
+    rule: "0 <= confidence <= 1"
+    message: "confidence 超出 [0,1]"
+  - id: timestamp_iso
+    severity: error
+    scope: all
+    rule: "timestamp 非空且 ISO8601 可解析"
+    message: "timestamp 缺失或非 ISO8601"
+  - id: memory_track_valid
+    severity: error
+    scope: all
+    rule: "memory_track in {semantic, episodic}（空视为非法）"
+    message: "memory_track 非法或为空"
+  - id: summary_hash_format
+    severity: error
+    scope: all
+    rule: "summary_hash 为空或 sha256 hex[:12]"
+    message: "summary_hash 非 sha256 hex[:12] 格式"
+  # ── warning 级（软约束——违例列出交人工裁决，不拦写入）──
+  - id: summary_len
+    severity: warning
+    scope: all
+    rule: "0 < len(summary) <= 200"
+    message: "summary 超长（>200 字）"
+  - id: content_required
+    severity: warning
+    scope: content_types
+    rule: "内容记忆类型 content 非空"
+    message: "内容类型条目 content 为空"
+  - id: source_ref_format
+    severity: warning
+    scope: asset_types
+    rule: "资产类型 source_ref 非空（L1 资产本体原位单源化）"
+    message: "资产类型条目 source_ref 为空"
+  - id: trust_score_range
+    severity: warning
+    scope: all
+    rule: "0 <= trust_score <= 1"
+    message: "trust_score 超出 [0,1]"
+  - id: expires_at_iso_or_empty
+    severity: warning
+    scope: all
+    rule: "expires_at 为空或 ISO8601 可解析"
+    message: "expires_at 非空且非 ISO8601"
+  - id: data_type_required
+    severity: warning
+    scope: all
+    rule: "data_type 非空"
+    message: "data_type 为空"
+  - id: id_format
+    severity: warning
+    scope: all
+    rule: "id 匹配 uuid4 或 mem_/concept_/g00 前缀"
+    message: "id 不符合 uuid4/mem_/concept_ 规范"

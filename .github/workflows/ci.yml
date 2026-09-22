@@ -1,0 +1,64 @@
+name: CI
+
+# 触发面：push + pull_request（含首推）
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    name: 语法编译 + 包导入冒烟 + 安装 + MCP 验证链
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7
+
+      - name: 配置 Python 3.11（安装器硬性门槛 py_min >= 3.11）
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: 安装运行依赖（安装器自检硬性项：jieba / numpy）
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install jieba numpy
+
+      - name: ① Python 语法编译（全树 .py）
+        run: python -m compileall -q -f .
+
+      - name: ② 包导入冒烟（4 入口件 + 8 核心模块）
+        run: |
+          python - <<'PY'
+          import importlib.util as iu
+          import os
+          import sys
+
+          FILES = [
+              "install.py", "update.py", "mcp_server.py", "test_mcp.py",
+              "src/siku_mcp_server.py", "src/siku_types.py", "src/check_permission.py",
+              "src/audit_logger.py", "src/l3_retrieval.py", "src/router.py",
+              "src/entity_archive.py", "src/siku_concept_meta.py",
+          ]
+          sys.path.insert(0, os.path.abspath("src"))
+          bad = []
+          for rel in FILES:
+              name = "ci_" + rel.replace("/", "_").replace(".py", "")
+              try:
+                  spec = iu.spec_from_file_location(name, rel)
+                  mod = iu.module_from_spec(spec)
+                  spec.loader.exec_module(mod)
+                  print("  OK   %s" % rel)
+              except BaseException as exc:
+                  bad.append(rel)
+                  print("  FAIL %s | %s: %s" % (rel, type(exc).__name__, str(exc)[:120]))
+          print("== import smoke: ok=%d bad=%d ==" % (len(FILES) - len(bad), len(bad)))
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: ③ 非交互安装（生成 41 列样例库 + 自检 7 项）
+        run: python install.py --yes --target "$RUNNER_TEMP/siku-core"
+
+      - name: ④ MCP 验证链（16 项检查 · 样例模式期望 FAIL=0）
+        run: |
+          python test_mcp.py --db "$RUNNER_TEMP/siku-core/sample_memory.db" | tee "$RUNNER_TEMP/mcp_verify.log"
+          grep -q "FAIL=0" "$RUNNER_TEMP/mcp_verify.log"

@@ -18,10 +18,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 安装运行依赖（安装器自检硬性项：jieba / numpy）
+      - name: 安装运行依赖（jieba / numpy = 安装器自检硬性项；pyyaml = 包内 3 件模块模块级引入，见 INSTALL.md 1.2）
         run: |
           python -m pip install --upgrade pip
-          python -m pip install jieba numpy
+          python -m pip install jieba numpy pyyaml
 
       - name: ① Python 语法编译（全树 .py）
         run: python -m compileall -q -f .
